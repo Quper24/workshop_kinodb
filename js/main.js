@@ -81,39 +81,90 @@
 //     });
 // }
 
-
+let searchForm = document.querySelector('#search-form');
 let result = document.querySelector('#movies');
 
-let request = new XMLHttpRequest();
 
-request.open('GET', 'https://api.themoviedb.org/3/search/movie?api_key=4e61d32c7f8095da04f6550d8cc3dd94&language=ru-RU&query=%D0%94%D0%B6%D0%BE%D0%BD&page=1&include_adult=false');
+searchForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    let searchText = document.querySelector('.form-control').value;
+    let request = new XMLHttpRequest();
 
-request.addEventListener('readystatechange', function () {
+    request.open('GET', 'https://api.themoviedb.org/3/search/movie?api_key=4e61d32c7f8095da04f6550d8cc3dd94&language=ru-RU&page=1&include_adult=false&query=' + searchText);
 
-    let output;
+    request.send();
 
-    if (request.readyState < 4) {
-        result.innerHTML = 'Загрузка';
-    } else if (request.readyState === 4) {
-        if (request.status === 200 && request.status < 300) {
-            output = JSON.parse(this.responseText);
-            result.innerHTML = output;
-            for (let resultsKey in output.results) {
-                console.log(output.results[resultsKey].title)
+    request.addEventListener('readystatechange', function () {
+
+
+        if (request.readyState < 4) {
+            result.innerHTML = 'Загрузка';
+        } else if (request.readyState === 4) {
+            if (request.status === 200 && request.status < 300) {
+
+                let output = JSON.parse(this.responseText);
+
+                let inner = '';
+
+                let genres = [];
+
+                for (let resultsKey in output.results) {
+                    let movie = output.results[resultsKey];
+                    let posterIMG = movie.poster_path ? `https://image.tmdb.org/t/p/w185_and_h278_bestv2${movie.poster_path}` : './img/no-poster.jpg';
+                    genres.push(movie.genre_ids);
+                    console.log(genres);
+                    inner += `
+                        <div class="col-md-3">
+                            <div class="well text-center">
+                                <img src="${posterIMG}">
+                                    <h5>${movie.title}</h5>
+                                <a onclick="getGenres(${genres})" class="btn btn-primary" href="#">genres</a>
+                            </div>
+                        </div>
+                    `;
+
+                }
+                result.innerHTML = inner;
             }
+        } else {
+            statusMessage.innerHTML = 'Error';
         }
-    } else {
-        statusMessage.innerHTML = 'Error';
-    }
 
 
+        // if (this.readyState === 4) {
+        //     console.log('Status:', this.status);
+        //     console.log('Headers:', this.getAllResponseHeaders());
+        //     console.log('Body:', output.results);
+        // }
+    });
 
-    // if (this.readyState === 4) {
-    //     console.log('Status:', this.status);
-    //     console.log('Headers:', this.getAllResponseHeaders());
-    //     console.log('Body:', output.results);
-    // }
+
 });
 
-request.send();
 
+function getGenres(id){
+
+    console.log(id);
+
+    let request = new XMLHttpRequest();
+
+    request.open('GET', 'https://api.themoviedb.org/3/genre/movie/list?api_key=4e61d32c7f8095da04f6550d8cc3dd94&language=en-US');
+
+    request.send();
+
+    request.addEventListener('readystatechange', function () {
+
+
+        if (request.readyState < 4) {
+            result.innerHTML = 'Загрузка';
+        } else if (request.readyState === 4) {
+            if (request.status === 200 && request.status < 300) {
+
+                let output = JSON.parse(this.responseText);
+                console.log(output);
+            }
+        }else {
+            statusMessage.innerHTML = 'Error';
+        }
+    });
+}
