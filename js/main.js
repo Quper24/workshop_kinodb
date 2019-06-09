@@ -131,11 +131,11 @@ searchForm.addEventListener('submit', function (e) {
         }
 
 
-        // if (this.readyState === 4) {
-        //     console.log('Status:', this.status);
-        //     console.log('Headers:', this.getAllResponseHeaders());
-        //     console.log('Body:', output.results);
-        // }
+        if (this.readyState === 4) {
+            console.log('Status:', this.status);
+            console.log('Headers:', this.getAllResponseHeaders());
+            console.log('Body:', output.results);
+        }
     });
 
 
