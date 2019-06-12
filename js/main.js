@@ -112,30 +112,31 @@ searchForm.addEventListener('submit', function (e) {
                     let movie = output.results[resultsKey];
                     let posterIMG = movie.poster_path ? `https://image.tmdb.org/t/p/w185_and_h278_bestv2${movie.poster_path}` : './img/no-poster.jpg';
                     genres.push(movie.genre_ids);
-                    console.log(genres);
+                    console.log(movie.genre_ids);
                     inner += `
                         <div class="col-md-3">
                             <div class="well text-center">
                                 <img src="${posterIMG}">
                                     <h5>${movie.title}</h5>
-                                <a onclick="getGenres(${genres})" class="btn btn-primary" href="#">genres</a>
+                                <a class="btn btn-primary" href="#">Описание</a>
                             </div>
                         </div>
                     `;
 
                 }
                 result.innerHTML = inner;
+
+
+                console.log('Status:', this.status);
+                console.log('Body:', output.results);
+
             }
         } else {
-            statusMessage.innerHTML = 'Error';
+            result.innerHTML = 'Error';
         }
 
 
-        if (this.readyState === 4) {
-            console.log('Status:', this.status);
-            console.log('Headers:', this.getAllResponseHeaders());
-            console.log('Body:', output.results);
-        }
+
     });
 
 
